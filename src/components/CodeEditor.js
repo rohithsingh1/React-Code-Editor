@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
-import Editor from "react-simple-code-editor";
 import { themes, Prism } from "prism-react-renderer";
 import { Button, Dropdown, Space } from "antd";
 import { CodeHighlighter } from "./Highlighter";
 import { allLanguages } from "../constants/language";
-import { LanguageContext, actionTypes } from "../useContext/useContext";
+import { LanguageContext } from "../useContext/useContext";
+import Editor from "./Editor";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 
 function CodeEditor() {
   const context = useContext(LanguageContext);
-  console.log("context = ", context);
   const [theme, setTheme] = useState(themes.dracula);
   const [allThemes, setAllThemes] = useState([]);
   const [code, setCode] = useState(context.currState.jsx);
@@ -51,27 +50,6 @@ function CodeEditor() {
     setCode(context.currState[language1]);
   };
 
-  const updateLanguage = () => {
-    if (language === "jsx") {
-      context.dispatchFn({
-        type: actionTypes.setJsxCode,
-        payload: code,
-      });
-    }
-    if (language === "html") {
-      context.dispatchFn({
-        type: actionTypes.setHtmlCode,
-        payload: code,
-      });
-    }
-    if (language === "css") {
-      context.dispatchFn({
-        type: actionTypes.setCssCode,
-        payload: code,
-      });
-    }
-  };
-
   return (
     <>
       {allThemes.length ? (
@@ -106,13 +84,13 @@ function CodeEditor() {
             value={code}
             onValueChange={(code) => {
               setCode(code);
-              updateLanguage();
             }}
             highlight={(code) =>
               CodeHighlighter({ code: code, language: language, theme: theme })
             }
             padding={3}
             style={styles.root}
+            language={language}
           />
         </>
       ) : (
